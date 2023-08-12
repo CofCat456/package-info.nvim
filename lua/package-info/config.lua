@@ -20,6 +20,7 @@ local M = {
         },
         autostart = true,
         package_manager = constants.PACKAGE_MANAGERS.npm,
+        is_workspace = false,
         hide_up_to_date = false,
         hide_unstable_versions = false,
     },
@@ -74,9 +75,18 @@ M.__register_package_manager = function()
     end
 
     local pnpm_lock = io.open("pnpm-lock.yaml", "r")
+    local pnpm_workspace = io.open("pnpm-workspace.yaml", "r")
 
     if pnpm_lock ~= nil then
         M.options.package_manager = constants.PACKAGE_MANAGERS.pnpm
+
+        -- test pnpm workspace
+        if pnpm_workspace ~= nil then
+            M.options.is_workspace = true
+
+            io.close(pnpm_workspace)
+            logger.info("This is a workspace project!")
+        end
 
         io.close(pnpm_lock)
         state.is_in_project = true
